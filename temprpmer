@@ -1,0 +1,38 @@
+#!/bin/bash
+
+[[ -z /usr/bin/sensors ]] && exit 0
+
+yellow="#FFF600"
+orange="#FFAE00"
+red="#FF0000"
+defaultColor="#F1F1F1"
+rpmColor="$defaultColor"
+tempColor="$defaultColor"
+
+temp_rpm=($(sensors | awk '/^CPU:/ {cpu=$2}/^Processor\ Fan:/ {fan=$3}END {print cpu; print fan}'))
+
+if [ ${temp_rpm[1]} -gt 6000 ]; then
+	rpmColor=$red
+else if [ ${temp_rpm[1]} -gt 5300 ]; then
+		rpmColor=$orange
+	else if [ ${temp_rpm[1]} -gt 4000 ]; then
+		rpmColor=$yellow
+		fi
+	fi
+fi
+
+tmp_digits=$(echo -n "${temp_rpm[0]}" | tr -d '+' | cut -f1 -d'.')
+
+if [ $tmp_digits -gt 80 ]; then
+	tempColor=$red
+else if [ $tmp_digits -gt 75 ]; then
+		tempColor=$orange
+	else if [ $tmp_digits -gt 65 ]; then
+		tempColor=$yellow
+		fi
+	fi
+fi
+
+cpuTemp=$(echo -n "${temp_rpm[0]}" | tr -d '+')
+
+echo -e "<span font='FontAwesome'>\\uf2dc</span> <span color='$tempColor'>$cpuTemp</span>  <span font='FontAwesome'>\\uf06c</span> <span color='$rpmColor'>${temp_rpm[1]}RPM</span>"

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+defaultColor="#F1F1F1"
+dir="$1"
+color="$2"
+
+[[ -z "$dir" ]] && exit 0
+
+[[ ! -z "$color" ]] && defaultColor=\#"$color"
+
+if [[ "$dir" =~ "/home/"* ]]; then
+    label="ue803"
+else
+    label="ue800"
+fi
+
+function repl {
+    template="<span font='fontello'>{label}</span> <span color='{color}'>{text}</span>"
+    echo -n "$template" | awk '{gsub("{color}", "'$1'"); gsub("{label}", "'$2'"); gsub("{text}", "'$3'"); print}'
+
+}
+
+cmd=$(df -h -l --output=avail "$dir" | grep -v Avail | tr -d ' ')
+
+alert=$(df -h -P | tail -n 1 | awk '{if (100-$5<10) print "#FF0000"; else print "'$defaultColor'"}')
+
+echo -e $(repl $alert \\\\"$label" $cmd)

@@ -1,0 +1,23 @@
+#!/bin/sh
+defaultColor="#F1F1F1"
+color="$1"
+yellow="#FFF600"
+orange="#FFAE00"
+red="#FF0000"
+
+[[ ! -z "$color" ]] && defaultColor=\#"$color"
+
+free_rest=$(free -m | tail -n 2 | head -n 1 | awk '{printf("%.1f ", ($3)/1024); printf("%.f", ($3/$2)*100)}')
+tuple=($free_rest)
+
+if [ ${tuple[1]} -gt 90 ]; then
+	defaultColor=$red
+else if [ ${tuple[1]} -gt 80 ]; then
+		defaultColor=$orange
+	else if [ ${tuple[1]} -gt 70 ]; then
+		defaultColor=$yellow
+		fi
+	fi
+fi
+
+echo -e "<span font='FontAwesome'>\\uf2db</span> <span color='$defaultColor'>${tuple[0]}G</span>"

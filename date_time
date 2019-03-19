@@ -1,0 +1,16 @@
+#!/bin/bash
+
+defaultColor="#F1F1F1"
+color="$1"
+
+[[ ! -z "$color" ]] && defaultColor=\#"$color"
+
+function repl {
+    template="<span font='FontAwesome'>{label}</span> <span color='{color}'>{text}</span>"
+    echo -n "$template" | awk '{gsub("{color}", "'$1'"); gsub("{label}", "'$2'"); gsub("{text}", "'$3'"); print}' | awk '{gsub("Zalupa", " "); print}'
+
+}
+
+dt=$(date '+%Y-%m-%d %I:%M %p' | awk -F '-' '{gsub(" ", "Zalupa"); print}')
+
+echo -e $(repl $defaultColor '\\uf017' $dt)
