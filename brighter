@@ -1,0 +1,14 @@
+#!/bin/bash
+
+icon="uf042"
+defaultColor="#F1F1F1"
+
+[[ -z /usr/bin/xbacklight ]] && exit 0
+
+[[ ! -z "$1" ]] && defaultColor=\#"$1"
+
+function label {
+    echo -e "<span font='FontAwesome'>$1</span> <span color='$2'>$3%</span>"
+}
+
+label \\"$icon" "$defaultColor" $(xbacklight -get)

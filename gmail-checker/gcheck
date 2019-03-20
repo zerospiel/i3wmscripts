@@ -1,0 +1,26 @@
+#!/bin/bash
+
+icon="uf0e0"
+defaultColor="#F1F1F1"
+inbox="#D44638"
+
+[[ ! -z "$1" ]] && defaultColor=\#"$1"
+
+function label {
+    gbin=$($HOME/.local/src/gmail-checker/gmail-checker)
+    [[ $gbin == 0 ]] && inbox="$defaultColor"
+    echo -e "<span font='FontAwesome' color='$inbox'>$1</span> <span color='$2'>$gbin</span>"
+}
+
+case $BLOCK_BUTTON in
+    2)
+        xdg-open "https://gmail.com" > /dev/null 2>&1
+        ;;
+    3)
+        label \\"$icon" "$defaultColor"
+        exit 0
+        ;;
+esac
+
+label \\"$icon" "$defaultColor"
+exit 0

@@ -35,4 +35,4 @@ fi
 
 cpuTemp=$(echo -n "${temp_rpm[0]}" | tr -d '+')
 
-echo -e "<span font='FontAwesome'>\\uf2dc</span> <span color='$tempColor'>$cpuTemp</span>  <span font='FontAwesome'>\\uf06c</span> <span color='$rpmColor'>${temp_rpm[1]}RPM</span>"
+echo -e "<span font='FontAwesome' color='#77dfff'>\\uf2dc</span> <span color='$tempColor'>$cpuTemp</span>  <span font='FontAwesome'>\\uf06c</span> <span color='$rpmColor'>${temp_rpm[1]}RPM</span>"

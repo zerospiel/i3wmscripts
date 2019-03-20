@@ -10,12 +10,14 @@ color="$2"
 
 if [[ "$dir" =~ "/home/"* ]]; then
     label="ue803"
+    archColor="#c4c460"
 else
     label="ue800"
+    archColor="#1793d1"
 fi
 
 function repl {
-    template="<span font='fontello'>{label}</span> <span color='{color}'>{text}</span>"
+    template="<span font='fontello' color='$archColor'>{label}</span> <span color='{color}'>{text}</span>"
     echo -n "$template" | awk '{gsub("{color}", "'$1'"); gsub("{label}", "'$2'"); gsub("{text}", "'$3'"); print}'
 
 }
@@ -23,5 +25,11 @@ function repl {
 cmd=$(df -h -l --output=avail "$dir" | grep -v Avail | tr -d ' ')
 
 alert=$(df -h -P | tail -n 1 | awk '{if (100-$5<10) print "#FF0000"; else print "'$defaultColor'"}')
+
+case $BLOCK_BUTTON in
+    3)
+        xdg-open "$dir"
+        ;;
+esac
 
 echo -e $(repl $alert \\\\"$label" $cmd)

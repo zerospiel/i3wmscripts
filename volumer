@@ -1,0 +1,54 @@
+#!/bin/bash
+
+muted="uf1f6"
+down="uf027"
+up="uf028"
+defaultColor="#F1F1F1"
+step="5dB"
+chan="Master"
+
+# TODO: opt for chan and step
+
+# if [[ "$1" ]] ; then
+#     chan="${BLOCK_INSTANCE:-$(amixer -D default scontrols |
+#                       sed -n "s/Simple mixer control '\([^']*\)',0/\1/p" |
+#                       head -n1
+#                     )}"
+# fi
+
+[[ ! -z "$1" ]] && defaultColor=\#"$1"
+
+function label {
+    echo -e "<span font='FontAwesome'>$1</span> <span color='$2'>$3</span>"
+}
+
+function get_label {
+    vol_state=($(amixer -D default get $chan | tail -n 1 | awk '/^  Mono:/ {volume=$4; toggle=$6}END {print (volume, toggle)}' | tr -d '[]%'))
+    if [[ ${vol_state[1]} = "on" ]] ; then
+        if [[ ${vol_state[0]} -gt 35 ]]; then
+            label \\"$up" "$defaultColor" "${vol_state[0]}%"
+        else
+            # I like the more visible lines
+            label \\"$up" "$defaultColor" "${vol_state[0]}%"
+        fi
+    else
+        label \\"$muted" "#FF0000" "muted"
+    fi
+}
+
+case $BLOCK_BUTTON in
+    3)
+        amixer -q -D default sset $chan toggle
+        get_label
+        ;;
+    4)
+        amixer -q -D default sset $chan $step- unmute
+        get_label
+        ;;
+    5)
+        amixer -q -D default sset $chan $step+ unmute
+        get_label
+        ;;
+esac
+
+get_label

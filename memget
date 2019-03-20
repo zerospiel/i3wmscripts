@@ -20,4 +20,4 @@ else if [ ${tuple[1]} -gt 80 ]; then
 	fi
 fi
 
-echo -e "<span font='FontAwesome'>\\uf2db</span> <span color='$defaultColor'>${tuple[0]}G</span>"
+echo -e "<span font='FontAwesome' color='#53ba00'>\\uf2db</span> <span color='$defaultColor'>${tuple[0]}G</span>"
