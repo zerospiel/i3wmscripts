@@ -1,2 +1,4 @@
 i3*/
-*json
+*.json
+*.key
+*.tmp

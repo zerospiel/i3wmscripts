@@ -3,7 +3,10 @@
 
 # Taken for temp purposes from: https://github.com/Anachron/i3blocks/
 
-API_KEY=""
+# Useless without VPN due to Russian's faggots called ROSKOMPOZOR
+# Instead, use ACCUWEATHER API, it's 50 calls/day for free. I will use it in my future CLI, not now
+
+API_KEY=$(cat $HOME/.local/src/openweather.key)
 
 # Check on http://openweathermap.org/find
 CITY_ID="524901"

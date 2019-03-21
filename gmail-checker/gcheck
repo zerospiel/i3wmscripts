@@ -8,8 +8,16 @@ inbox="#D44638"
 
 function label {
     gbin=$($HOME/.local/src/gmail-checker/gmail-checker)
-    [[ $gbin == 0 ]] && inbox="$defaultColor"
-    echo -e "<span font='FontAwesome' color='$inbox'>$1</span> <span color='$2'>$gbin</span>"
+    case $gbin in
+        ''|*[!0-9]*)
+            echo -e "<span font='FontAwesome' color='#FF0000'>\\uf0e2</span> <span color='$2'>---</span>"
+        ;;
+        *)
+            [[ $gbin == 0 ]] && inbox="$defaultColor"
+            echo -e "<span font='FontAwesome' color='$inbox'>$1</span> <span color='$2'>$gbin</span>"
+        ;;
+    esac
+    
 }
 
 case $BLOCK_BUTTON in
