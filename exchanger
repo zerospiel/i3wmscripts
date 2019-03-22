@@ -1,13 +1,15 @@
 #!/bin/bash
 
 API_KEY=$(cat $HOME/.local/src/currate.key)
-RATES_FILE="$HOME/.local/src/rates.tmp"
+# RATES_FILE="$HOME/.local/src/rates.tmp"
+
+ping -c 1 8.8.8.8 > /dev/null 2>&1 || sleep 10s;
 
 [[ -z /usr/bin/bc ]] && exit 0
 
 [[ -z "$API_KEY" ]] && exit 0
 
-[[ ! -f "$RATES_FILE" ]] && touch $RATES_FILE
+# [[ ! -f "$RATES_FILE" ]] && touch $RATES_FILE
 
 defaultColor="#F1F1F1"
 dollarsign="uf155"
@@ -22,51 +24,63 @@ downColor="#FF0000"
 upColor="#15B700"
 equalColor="$defaultColor"
 
-
-curr=($(curl -sX GET "https://currate.ru/api/?get=rates&pairs=USDRUB,EURRUB&key=$API_KEY" | grep -oE "([0-9].[.])[0-9]+"))
-# dollar=${curr[0]}
-# euro=${curr[1]}
-dollar=$(printf "%.2f" ${curr[0]})
-euro=$(printf "%.2f" ${curr[1]})
-
-if [[ ! -s "$RATES_FILE" ]] ; then
-    prevDollar="$dollar"
-    prevEuro="$euro"
-    new="true"
-else
-    prevDollar=$(cat $RATES_FILE | head -n 1)
-    prevEuro=$(cat $RATES_FILE | tail -n 1)
-fi
-
 numCompare() {
    awk -v n1="$1" -v n2="$2" 'BEGIN {print (n1<n2?"0":"1")}'
 }
 
-if [[ "$new" = "true" ]]; then
-    dollarState=$equalsign
-    dollarStateColor=$equalColor
-    euroState=$equalsign
-    euroStateColor=$equalColor
-else
-    res=$(numCompare $dollar $prevDollar)
-    if [[ "$res" -eq 1 ]] ; then
-        dollarState=$upsign
-        dollarStateColor=$upColor
-    else
-        dollarState=$downsign
-        dollarStateColor=$downColor
-    fi
+run_rates() {
+    curr=($(curl -sX GET "https://currate.ru/api/?get=rates&pairs=USDRUB,EURRUB&key=$API_KEY" | grep -oE "([0-9].[.])[0-9]+"))
+    # dollar=${curr[0]}
+    # euro=${curr[1]}
+    dollar=$(printf "%.2f" ${curr[0]})
+    euro=$(printf "%.2f" ${curr[1]})
 
-    res=$(numCompare $euro $prevEuro)
-    if [[ "$res" -eq 1 ]] ; then
-        euroState=$upsign
-        euroStateColor=$upColor
-    else
-        euroState=$downsign
-        euroStateColor=$downColor
-    fi
-fi
+    # if [[ ! -s "$RATES_FILE" ]] ; then
+    #     prevDollar="$dollar"
+    #     prevEuro="$euro"
+    #     new="true"
+    # else
+    #     prevDollar=$(cat $RATES_FILE | head -n 1)
+    #     prevEuro=$(cat $RATES_FILE | tail -n 1)
+    # fi
 
-echo -e "$dollar"\\n"$euro" > "$RATES_FILE"
+    # if [[ "$new" = "true" ]]; then
+    #     dollarState=$equalsign
+    #     dollarStateColor=$equalColor
+    #     euroState=$equalsign
+    #     euroStateColor=$equalColor
+    # else
+    #     res=$(numCompare $dollar $prevDollar)
+    #     if [[ "$res" -eq 1 ]] ; then
+    #         dollarState=$upsign
+    #         dollarStateColor=$upColor
+    #     else
+    #         dollarState=$downsign
+    #         dollarStateColor=$downColor
+    #     fi
 
-echo -e "<span font='FontAwesome' color='$dollarColor'>\\$dollarsign</span> <span color='$defaultColor'>$dollar</span> <span font='FontAwesome' color='$dollarStateColor'>\\$dollarState</span>  <span font='FontAwesome' color='$euroColor'>\\$eurosign</span> <span color='$defaultColor'>$euro</span> <span font='FontAwesome' color='$euroStateColor'>\\$euroState</span>"
+    #     res=$(numCompare $euro $prevEuro)
+    #     if [[ "$res" -eq 1 ]] ; then
+    #         euroState=$upsign
+    #         euroStateColor=$upColor
+    #     else
+    #         euroState=$downsign
+    #         euroStateColor=$downColor
+    #     fi
+    # fi
+
+    # echo -e "$dollar"\\n"$euro" > "$RATES_FILE"
+
+    # echo -e "<span font='FontAwesome' color='$dollarColor'>\\$dollarsign</span> <span color='$defaultColor'>$dollar</span> <span font='FontAwesome' color='$dollarStateColor'>\\$dollarState</span>  <span font='FontAwesome' color='$euroColor'>\\$eurosign</span> <span color='$defaultColor'>$euro</span> <span font='FontAwesome' color='$euroStateColor'>\\$euroState</span>"
+
+    echo -e "<span font='FontAwesome' color='$dollarColor'>\\$dollarsign</span> <span color='$defaultColor'>$dollar</span>  <span font='FontAwesome' color='$euroColor'>\\$eurosign</span> <span color='$defaultColor'>$euro</span>"
+}
+
+case $BLOCK_BUTTON in
+    3)
+        run_rates
+        exit 0
+    ;;
+esac
+
+run_rates
