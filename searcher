@@ -1,0 +1,7 @@
+#!/bin/bash
+
+[[ -z /usr/bin/zenity ]] && exit 0
+
+output=$(zenity --entry)
+[[ -z "$output" ]] && exit 0
+xdg-open https://www.google.com/search?q=$output&ie=UTF-8 > /dev/null 2>&1
